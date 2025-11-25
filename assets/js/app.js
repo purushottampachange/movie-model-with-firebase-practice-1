@@ -102,7 +102,7 @@ const Templating = (arr) => {
 
         return `
           
-            <div class="col-md-3 col-sm-6" id ="${m.id}">
+            <div class="col-md-3 col-sm-6 mb-4" id ="${m.id}">
                 <div class="card movieCard text-white">
                     <div class="card-header p-0">
                         <div class="row">
@@ -120,7 +120,7 @@ const Templating = (arr) => {
                                 alt="${m.title}">
                             <figcaption>
                                 <h5>${m.title}</h5>
-                                <p>${m.title}</p>
+                                <p>${m.content}</p>
                             </figcaption>
                         </figure>
                     </div>
@@ -138,6 +138,48 @@ const Templating = (arr) => {
 
 }
 
+const CraeteMovie = (m,id) =>{
+
+    let card = document.createElement("div");
+
+    card.id = id;
+
+    card.className = "col-md-3 col-sm-6 mb-4";
+
+    card.innerHTML = `
+        
+          <div class="card movieCard text-white">
+                    <div class="card-header p-0">
+                        <div class="row">
+                            <div class="col-10">
+                                <h5>${m.title}</h5>
+                            </div>
+                            <div class="col-2">
+                                <h6><span class="badge ${RatingClass(m.rating)}">${m.rating}</span></h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <figure>
+                            <img src="${m.imgPath}"
+                                alt="${m.title}">
+                            <figcaption>
+                                <h5>${m.title}</h5>
+                                <p>${m.content}</p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between p-0">
+                        <button class="btn btn-sm btn-success">Edit</button>
+                        <button class="btn btn-sm btn-danger">Remove</button>
+                    </div>
+                </div>
+        
+    `;
+
+    movieContainer.prepend(card);
+}
+
 const FetchMovies = async () => {
 
     let res = await MakeAPICall(PostURL, "GET", null);
@@ -151,21 +193,26 @@ const FetchMovies = async () => {
 
 FetchMovies();
 
-// const onSubmit = (eve) =>{
-
-//     eve.preventDefault();
-
-//     let movieObj = {
-
-//         title : movieName.value,
-//         content : movieDesc.value,
-//         imgPath : movieImg.value,
-//         rating : movieRating.value,
-//     }
 
 
-// }
+const onSubmit = async (eve) =>{
 
-// movieForm.addEventListener("submit", onSubmit);
+    eve.preventDefault();
+
+    let movieObj = {
+
+        title : movieName.value,
+        content : movieDesc.value,
+        imgPath : movieImg.value,
+        rating : movieRating.value,
+    }
+
+    let res = await MakeAPICall(PostURL,"POST",movieObj);
+   
+    CraeteMovie(movieObj,res.name);
+    onHideShow();
+}
+
+movieForm.addEventListener("submit", onSubmit);
 nfxBtn.addEventListener("click", onHideShow);
 closeBtns.forEach(b => b.addEventListener("click", onHideShow));
